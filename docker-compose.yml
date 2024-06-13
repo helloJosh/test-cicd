@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  app1:
+    build: .
+    ports:
+      - "8081:8080"
+    networks:
+      - app-network
+#    depends_on:
+#      - mssql
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:sqlserver://mssql:1433;databaseName=yourDatabase
+#      - SPRING_DATASOURCE_USERNAME=yourUsername
+#      - SPRING_DATASOURCE_PASSWORD=yourPassword
+
+  app2:
+    build: .
+    ports:
+      - "8082:8080"
+    networks:
+      - app-network
+#    depends_on:
+#      - mssql
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:sqlserver://mssql:1433;databaseName=yourDatabase
+#      - SPRING_DATASOURCE_USERNAME=yourUsername
+#      - SPRING_DATASOURCE_PASSWORD=yourPassword
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - app-network
+    depends_on:
+      - app1
+      - app2
+
+#  mssql:
+#    image: mcr.microsoft.com/mssql/server
+#    environment:
+#      ACCEPT_EULA: "Y"
+#      SA_PASSWORD: "yourStrong(!)Password"
+#    volumes:
+#      - mssql-data:/var/opt/mssql
+#    networks:
+#      - app-network
+
+volumes:
+  mssql-data:
+
+networks:
+  app-network:
