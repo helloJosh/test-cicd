@@ -29,7 +29,7 @@ jobs:
 #        run: mvn clean verify sonar:sonar -Dsonar.projectKey=${{secrets.SONAR_KEY}} -Dsonar.projectName=${{secrets.SONAR_HOST}} -Dsonar.host.url=${{secrets.SONAR_HOST}} -Dsonar.token=${{secrets.SONAR_TOKEN}}
 
       - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
       - name: Build Docker image
         run: sudo docker build -t ${{ secrets.DOCKER_USERNAME }}/hello-spring:latest .
@@ -45,7 +45,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/hello-spring:latest
-            docker stop hello-spring || true
-            docker rm hello-spring || true
-            docker run -d --name hello-spring -p 8080:8080 -p 6379:6379 -p 1433:1433 -p 80:80 ${{ secrets.DOCKER_USERNAME }}/hello-spring:latest
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hello-spring:latest
+            sudo docker stop hello-spring || true
+            sudo docker rm hello-spring || true
+            sudo docker run -d --name hello-spring -p 8080:8080 -p 6379:6379 -p 1433:1433 -p 80:80 ${{ secrets.DOCKER_USERNAME }}/hello-spring:latest
