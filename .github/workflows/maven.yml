@@ -22,6 +22,12 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 #
@@ -31,11 +37,14 @@ jobs:
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Build Docker image
-        run: sudo docker build -t ${{ secrets.DOCKER_USERNAME }}/hello-spring:latest .
+      - name: Build Docker image with Docker compose
+        run : sudo docker-compose build
+        #run: sudo docker build -t ${{ secrets.DOCKER_USERNAME }}/hello-spring:latest .
 
       - name: Push Docker image to Docker Hub
-        run: sudo docker push ${{ secrets.DOCKER_USERNAME }}/hello-spring:latest
+        run: |
+          sudo docker-compose push
+        #run: sudo docker push ${{ secrets.DOCKER_USERNAME }}/hello-spring:latest
 
       - name: Deploy to server via SSH
         uses: appleboy/ssh-action@master
@@ -45,7 +54,11 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hello-spring:latest
-            sudo docker stop hello-spring || true
-            sudo docker rm hello-spring || true
-            sudo docker run -d --name hello-spring -p 8080:8080 -p 6379:6379 -p 1433:1433 -p 80:80 ${{ secrets.DOCKER_USERNAME }}/hello-spring:latest
+            cd /app
+            docker-compose pull
+            docker-compose down || true
+            docker-compose up -d
+#            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hello-spring:latest
+#            sudo docker stop hello-spring || true
+#            sudo docker rm hello-spring || true
+#            sudo docker run -d --name hello-spring -p 8080:8080 -p 6379:6379 -p 1433:1433 -p 80:80 ${{ secrets.DOCKER_USERNAME }}/hello-spring:latest
