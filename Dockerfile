@@ -1,6 +1,5 @@
 FROM eclipse-temurin:21-jre
 
-
 WORKDIR /app
 
 COPY target/hello.jar /app/hello.jar
