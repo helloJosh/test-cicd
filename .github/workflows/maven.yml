@@ -59,10 +59,10 @@ jobs:
       - name: Stop existing containers on port 80 and 8080
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
-          username: ec2-user
-          key: ${{ secrets.PRIVATE_KEY }}
-          port: 22
+          host: ${{ secrets.SSH_IP }}
+          username: ${{ secrets.SSH_ID }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
           script: |
             ports_to_check=("80" "8080")
             for port in "${ports_to_check[@]}"; do
