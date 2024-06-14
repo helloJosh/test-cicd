@@ -69,10 +69,10 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            mkdir -p /home/ubuntu/app
+            mkdir -p /home/ubuntu/test
             cd $GITHUB_WORKSPACE
-            cp -r * /home/ubuntu/app
-            cd /home/ubuntu/app
+            cp -r * /home/ubuntu/test
+            cd /home/ubuntu/test
             docker-compose pull
             docker-compose down || true
             docker-compose up -d
